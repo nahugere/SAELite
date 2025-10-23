@@ -26,6 +26,9 @@ class Personnel(models.Model):
     position = models.CharField(max_length=250, blank=False, null=True)
     created_at = models.DateTimeField(default=timezone.now)
 
+    def __str__(self):
+        return self.full_name
+
     class Meta:
         verbose_name = "Personnel"
         verbose_name_plural = "Personnel"
@@ -33,9 +36,11 @@ class Personnel(models.Model):
 class Certificate(models.Model):
     ca = models.ForeignKey(CA, on_delete=models.CASCADE, related_name='certificate')
     personnel = models.ForeignKey(Personnel, on_delete=models.CASCADE, related_name='certificate')
-    certificate = models.CharField(max_length=128, unique=True)
     signature = models.TextField(blank=True, null=True)
     issued_at = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return self.personnel.full_name
 
 class UserRegistration(models.Model):
     personnel = models.ForeignKey(Personnel, on_delete=models.CASCADE)

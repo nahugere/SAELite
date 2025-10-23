@@ -15,10 +15,20 @@ def create_rsa_keys(sender, instance, created, **kwargs):
         instance.rsa_public_key = p
         instance.save()
 
+@receiver(post_save, sender=Personnel)
+def create_certificate(sender, instance, created, **kwargs):
+    if created:
+        cert = Certificate(ca=instance.ca, personnel=instance)
+        cert.save()
+
 @receiver(post_save, sender=Certificate)
 def sign_certificate(sender, instance, created, **kwargs):
     if created:
         message = secrets.token_urlsafe(20).encode()
-        instance.signature = utils.sign(instance.rsa_private_key, message)
+        instance.signature = utils.sign(instance.ca.rsa_private_key, message)
         instance.certificate = message
         instance.save()
+
+        # TODO 3: Implement an email sending mechanism to send the certificate message
+        print("🏎🏎🏎🏎")
+        print(message)

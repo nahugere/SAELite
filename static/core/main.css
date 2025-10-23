@@ -1,0 +1,125 @@
+* {
+    font-family: "Poppins", sans-serif;
+    outline: none !important;
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+body, h1, p {
+    margin: 0;
+}
+
+main {
+    margin: auto;
+    max-width: 400px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100dvh;
+}
+
+.main-sec {
+    width: 100%;
+    border-radius: 30px;
+    border: solid 1.5px #EFEFEF;
+    padding: 20px 30px 33px 30px;
+}
+
+.main-sec h1 {
+    font-weight: 500;
+    font-size: 25px;
+    margin-bottom: 21px;
+}
+
+.main-sec p.lbl {
+    padding-left: 11px;
+    font-size: 13px;
+    margin-bottom: 6px;
+}
+
+.main-sec .input-wrapper-div {
+    border-radius: 10px;
+    border: solid 1px #EFEFEF;
+    width: 100%;
+    min-height: 220px;
+    padding: 9px 9px 0 9px;
+    margin-bottom: 14px;
+}
+
+.input-wrapper {
+    border-radius: 10px;
+    border: solid 1px #EFEFEF;
+    width: 100%;
+    min-height: 40px;
+}
+
+.input-wrapper:nth-child(1) {
+    border-radius: 5px;
+}
+
+.input-wrapper input {
+    margin: 10px 9px;
+    width: 90%;
+    font-size: 13px;
+}
+
+input#cert, input#name {
+    border: 0;
+    margin: 10px 11px;
+}
+
+input::placeholder {
+    color: #A7A7A7;
+}
+
+input[type=submit] {
+    margin-top: 25px;
+    padding: 10px 30px;
+    color: white;
+    font-size: 13px;
+    background-color: #6297FF;
+    border-radius: 10px;
+    border: 0;
+    cursor: pointer;
+}
+
+.name-list {
+    margin-top: 5px;
+    height: 200px;
+    overflow: scroll;
+}
+
+.name-list .empt {
+    padding-top: 65px;
+    text-align: center;
+    color: #A7A7A7;
+    font-size: 15px;
+}
+
+.name-list .person {
+    padding: 9px 10px 9px 10px;
+    cursor: pointer;
+    border-bottom: solid 1px #EFEFEF;
+}
+
+.name-list .person:nth-last-child(2){
+    border: 0;
+}
+
+.name-list .person p.fullname {
+    font-size: 13px;
+}
+
+.name-list .person p.position {
+    font-size: 11px;
+    color: #A7A7A7;
+}
+
+.name-list .selected {
+    background-color: #ebf2ff97;
+    border-radius: 3px;
+}

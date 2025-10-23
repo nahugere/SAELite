@@ -43,10 +43,11 @@ def verify_cert(public_key, message, signature):
         public_key.encode(),
         backend=default_backend()
     )
+    d = message.encode()
     try:
         pk.verify(
-            signature,
-            message,
+            signature_b,
+            d,
             padding.PSS(
                 mgf=padding.MGF1(hashes.SHA256()),
                 salt_length=padding.PSS.MAX_LENGTH
