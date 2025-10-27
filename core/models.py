@@ -48,5 +48,23 @@ class UserRegistration(models.Model):
     registered_at = models.DateTimeField(default=timezone.now)
     public_key = models.TextField(blank=True, null=True)
 
+class PublicKeyRegistery(models.Model):
+    key = models.TextField(blank=False, null=True)
+
+    class Meta:
+        verbose_name = "Public Key Registery"
+        verbose_name_plural = "Public Key Registery"
+
+# class Allegation(models.Model):
+#     thresho
+
+class PublicAllegation(models.Model):
+    alleged = models.ForeignKey(Personnel, on_delete=models.CASCADE, related_name="alleged")
+    allegation = models.CharField(max_length=250, null=True, blank=False)
+
+class AllegationItem(models.Model):
+    allegation = models.ForeignKey(PublicAllegation, on_delete=models.CASCADE)
+    alleger = models.ForeignKey(Personnel, on_delete=models.CASCADE, related_name="alleger")
+
 # TODO 1: Implement Escrow storage and Public share of secret
 # TODO 2: Implement Allegations

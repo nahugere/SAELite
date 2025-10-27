@@ -10,8 +10,25 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
     <title>Register</title>
 </head>
-<body>
-    
+<body style="background: url('/static/img/bg.svg') no-repeat center center; background-size: cover;">
+
+    <script>
+    let pk = localStorage.getItem('pk_0')
+    let mac = localStorage.getItem('mac_0')
+    if (pk != null && mac != null) {
+        console.log("asgsdkgjnakjsgn")
+        window.location.href = "{% url 'file' %}"
+    } else {
+        {% if pairings %}
+        {% for p in pairings %}
+            localStorage.setItem("pk_{{ forloop.counter }}", "{{p.0}}")
+            localStorage.setItem("sk_{{ forloop.counter }}", "{{p.1}}")
+            localStorage.setItem("mac_{{ forloop.counter }}", "{{p.2}}")
+        {% endfor %}
+        {% endif %}
+    }
+    </script>
+
     <main>
         <div class="co-logo" style="width: 200; height: 55;"></div>
         <div class="main-sec">
@@ -24,7 +41,7 @@
                         <input type="text" name="names" value="" placeholder="Type Your Name Here" id="name" class="inp">
                     </div>
                     <input type="hidden" name="selected_person" id="selected-person">
-                    <div class="name-list">
+                    <div id="name-list" class="name-list">
                         
                         {% for e in people %}
                         <div class="person" data-id="{{e.employee_id}}">
@@ -45,10 +62,12 @@
             </form>
         </div>
         <div class="footer-msg">
+        {% if show_message %}
         {% if verified %}
-            <p>Allegation submitted Successfully! Learn what's next.</p>
+            <p class="snack-bar succ">You've been Successfully registered. <a href="{% url 'file' %}">File an allegation</a></p>
         {% else %}
-            <p>Your identity couldn't be verified, try again please!</p>
+            <p class="snack-bar err">Your identity couldn't be verified, try again please!</p>
+        {% endif %}
         {% endif %}
         </div>
     </main>
@@ -57,22 +76,55 @@
     document.addEventListener("DOMContentLoaded", function () {
         const people = document.querySelectorAll('.person');
         const hiddenInput = document.getElementById('selected-person');
+        const nameInput = document.getElementById('name')
+        const nameList = document.getElementById("name-list")
 
-        people.forEach(person => {
-        person.addEventListener('click', () => {
-            const isSelected = person.classList.contains('selected');
+        nameList.addEventListener("click", e => {
+            const person = e.target.closest(".person");
+            if (person) {
+                const id = person.dataset.id;
+                const name = person.querySelector(".fullname").textContent;
+                const position = person.querySelector(".position").textContent;
+                const isSelected = person.classList.contains("selected")
 
-            // Deselect all others
-            people.forEach(p => p.classList.remove('selected'));
-
-            if (!isSelected) {
-            person.classList.add('selected');
-            hiddenInput.value = person.dataset.id; // Send this ID on form submit
-            } else {
-            hiddenInput.value = ''; // Deselecting
+                people.forEach(p => p.classList.remove("selected"))
+                if (!isSelected) {
+                    person.classList.add("selected");
+                    hiddenInput.value = person.dataset.id;
+                } else {
+                    hiddenInput.value = ''
+                }
             }
         });
-        });
+
+        nameInput.addEventListener("input", async() => {
+            const value = nameInput.value.trim();
+            
+            try {
+                const response = await fetch(`{% url 'search' %}?employee=${encodeURIComponent(value)}`)
+                const re = await response.text();
+                const data = JSON.parse(re);
+                nameList.innerHTML = ""
+                
+                if (data["people"].length==0) {
+                    nameList.innerHTML = `<p class="empt">${value} couldn't be found</p>`
+                }
+
+                data["people"].forEach(e => {
+                    const personDiv = document.createElement("div");
+                    personDiv.classList.add("person");
+                    personDiv.dataset.id = e.id;
+                    personDiv.innerHTML = `
+                        <p class="fullname">${e.fullname}</p>
+                        <p class="position">${e.position}</p>
+                    `;
+                    nameList.appendChild(personDiv);
+                })
+            } catch(error) {
+                console.error(error)
+            }
+        })
+
     });
 
     </script>

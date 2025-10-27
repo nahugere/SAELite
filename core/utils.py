@@ -4,7 +4,11 @@ from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.backends import default_backend
 from cryptography.exceptions import InvalidSignature
+from decouple import config
+from .models import *
+import hashlib
 import base64
+import hmac
 
 def generate_rsa_keys():
     k = rsa.generate_private_key(
@@ -37,6 +41,33 @@ def sign(private_keys, message):
     )
     return base64.b64encode(signature).decode()
 
+def generate_mac(pk):
+    secret = config("SECRETKEY").encode("utf-8")
+    hmac_object = hmac.new(secret, pk.encode("utf-8"), hashlib.sha256)
+    return hmac_object.hexdigest()
+
+def create_key_pairings(n):
+    keys = []
+    for i in range(n):
+        k = rsa.generate_private_key(
+            public_exponent=65537, key_size=2048
+        )
+        sk = k.private_bytes(
+            encoding=serialization.Encoding.PEM,
+            format=serialization.PrivateFormat.PKCS8,
+            encryption_algorithm=serialization.NoEncryption()
+        ).hex()
+        pk = k.public_key().public_bytes(
+            encoding=serialization.Encoding.PEM,
+            format=serialization.PublicFormat.SubjectPublicKeyInfo
+        ).hex()
+        hmac_o = generate_mac(pk)
+        keys.append((pk, sk, hmac_o))
+        x = PublicKeyRegistery(key=pk)
+        x.save()
+    return keys
+
+
 def verify_cert(public_key, message, signature):
     signature_b = base64.b64decode(signature)
     pk = serialization.load_pem_public_key(
@@ -54,6 +85,6 @@ def verify_cert(public_key, message, signature):
             ),
             hashes.SHA256()
         )
-        return True
+        return True, create_key_pairings(3)
     except InvalidSignature:
-        return False
+        return False, []
