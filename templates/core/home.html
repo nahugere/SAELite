@@ -13,10 +13,9 @@
 <body style="background: url('/static/img/bg.svg') no-repeat center center; background-size: cover;">
 
     <script>
-    let pk = localStorage.getItem('pk_0')
-    let mac = localStorage.getItem('mac_0')
+    let pk = localStorage.getItem('pk_1')
+    let mac = localStorage.getItem('mac_1')
     if (pk != null && mac != null) {
-        console.log("asgsdkgjnakjsgn")
         window.location.href = "{% url 'file' %}"
     } else {
         {% if pairings %}

@@ -55,8 +55,9 @@ class PublicKeyRegistery(models.Model):
         verbose_name = "Public Key Registery"
         verbose_name_plural = "Public Key Registery"
 
-# class Allegation(models.Model):
-#     thresho
+class Allegation(models.Model):
+    threshold = models.IntegerField(default=2, blank=False, null=False)
+    
 
 class PublicAllegation(models.Model):
     alleged = models.ForeignKey(Personnel, on_delete=models.CASCADE, related_name="alleged")
@@ -64,6 +65,7 @@ class PublicAllegation(models.Model):
 
 class AllegationItem(models.Model):
     allegation = models.ForeignKey(PublicAllegation, on_delete=models.CASCADE)
+    allegation_text = models.TextField(null=True, blank=False)
     alleger = models.ForeignKey(Personnel, on_delete=models.CASCADE, related_name="alleger")
 
 # TODO 1: Implement Escrow storage and Public share of secret

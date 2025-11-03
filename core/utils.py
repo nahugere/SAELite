@@ -1,8 +1,11 @@
-from cryptography.hazmat.primitives import hashes, hmac
+import os
+from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.backends import default_backend
+from django.core.exceptions import SuspiciousOperation
 from cryptography.exceptions import InvalidSignature
 from decouple import config
 from .models import *
@@ -45,6 +48,25 @@ def generate_mac(pk):
     secret = config("SECRETKEY").encode("utf-8")
     hmac_object = hmac.new(secret, pk.encode("utf-8"), hashlib.sha256)
     return hmac_object.hexdigest()
+
+def generate_cypher_text(data):
+    key = AESGCM.generate_key(bit_length=128)
+    aesgcm = AESGCM(key)
+    nonce = os.urandom(12)
+    ct = aesgcm.encrypt(nonce, data, associated_data=None)
+    return key, nonce, ct
+
+def decrypt_cypher_text(key, nonce, ct):
+    aesgcm = AESGCM(key)
+    dt = aesgcm.decrypt(nonce, ct, associated_data=None)
+    return dt
+
+def compare_mac(pk, mac):
+    p = generate_mac(pk)
+    if hmac.compare_digest(p, mac):
+        return True
+    else:
+        raise SuspiciousOperation
 
 def create_key_pairings(n):
     keys = []

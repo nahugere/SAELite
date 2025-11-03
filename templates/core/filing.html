@@ -16,7 +16,7 @@
         <div class="co-logo" style="width: 200; height: 55;"></div>
         <div class="main-sec">
             <h1>File an Allegation</h1>
-            <form action="{% url 'home' %}" method="post">
+            <form action="{% url 'file' %}" method="post">
                 {% csrf_token %}
                 <p class="lbl">Name</p>
                 <div class="input-wrapper-div">
@@ -60,16 +60,18 @@
                 </div>
                 <p class="lbl">Detail</p>
                 <div class="input-wrapper">
-                    <textarea placeholder="Enter details of your allegation here" rows="3" name="" id=""></textarea>
+                    <textarea placeholder="Enter details of your allegation here" rows="3" name="allegation-detail" id=""></textarea>
                 </div>
                 <input type="submit" value="Register">
             </form>
         </div>
         <div class="footer-msg">
+        {% if show_message %}
         {% if verified %}
-            <p>Allegation submitted Successfully! Learn what's next.</p>
+            <p class="snack-bar succ">You've been Successfully registered. <a href="{% url 'file' %}">File an allegation</a></p>
         {% else %}
-            <p>Your identity couldn't be verified, try again please!</p>
+            <p class="snack-bar err">Your identity couldn't be verified, try again please!</p>
+        {% endif %}
         {% endif %}
         </div>
     </main>
@@ -80,6 +82,21 @@
         const hiddenInput = document.getElementById('selected-person');
         const nameInput = document.getElementById('name')
         const nameList = document.getElementById("name-list")
+        const macFeild = document.getElementById('mac')
+        const pkFeild = document.getElementById('pk')
+        
+        for (var i=1; i<=3; i++) {
+            var pk = localStorage.getItem(`pk_${i}`)
+            var mac = localStorage.getItem(`mac_${i}`)
+
+            if (pk!=null) {
+                pkFeild.value = pk;
+            }
+
+            if (mac!=null) {
+                macFeild.value = mac;
+            }
+        }
 
         nameList.addEventListener("click", e => {
             const person = e.target.closest(".person");
